@@ -177,7 +177,7 @@ class Unicred extends AbstractRemessa implements RemessaContract
         $this->add(106,106,'N');
         $this->add(107, 108, '');
         $this->add(109, 110, self::OCORRENCIA_REMESSA); // REGISTRO
-        $this->add(111, 120, Util::formatCnab('X', substr($boleto->getNumeroDocumento(), 5), 9));
+        $this->add(111, 120, Util::formatCnab('X', $boleto->getNumeroDocumento(), 9));
         $this->add(121, 126, $boleto->getDataVencimento()->format('dmy'));
         $this->add(127, 139, Util::formatCnab('9', $boleto->getValor(), 13, 2));
         $this->add(140, 149, '0');
