@@ -152,7 +152,7 @@ class Bancoob extends AbstractRemessa implements RemessaContract
         $this->add(196, 220, Util::formatCnab('X', $boleto->getNumeroControle(), 25));
         $this->add(221, 221, self::PROTESTO_NAO_PROTESTAR);
         if ($boleto->getDiasProtesto() > 0) {
-            $this->add(221, 221, self::PROTESTO_DIAS_UTEIS);
+            $this->add(221, 221, self::PROTESTO_DIAS_CORRIDOS);
         }
         $this->add(222, 223, Util::formatCnab('9', $boleto->getDiasProtesto(), 2));
         $this->add(224, 224, '0');
@@ -239,7 +239,8 @@ class Bancoob extends AbstractRemessa implements RemessaContract
         $this->add(43, 50, '00000000');
         $this->add(51, 65, '000000000000000');
         $this->add(66, 66, $boleto->getMulta() > 0 ? '2' : '0'); //0 = ISENTO | 1 = VALOR FIXO | 2 = PERCENTUAL
-        $this->add(67, 74, $boleto->getMulta() > 0 ? $boleto->getDataVencimento()->copy()->addDay()->format('dmY') : '00000000');
+        // $this->add(67, 74, $boleto->getMulta() > 0 ? $boleto->getDataVencimento()->copy()->addDay()->format('dmY') : '00000000');
+        $this->add(67, 74, $boleto->getMulta() > 0 ? $boleto->getDataVencimento()->addDay()->format('dmY') : '00000000');
         $this->add(75, 89, Util::formatCnab('9', $boleto->getMulta(), 15, 2));  //2,20 = 0000000000220
         $this->add(90, 199, '');
         $this->add(200, 207, '00000000');

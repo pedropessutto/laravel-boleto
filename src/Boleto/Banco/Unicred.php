@@ -2,47 +2,18 @@
 
 namespace Eduardokum\LaravelBoleto\Boleto\Banco;
 
-use Eduardokum\LaravelBoleto\Util;
-use Eduardokum\LaravelBoleto\CalculoDV;
+
 use Eduardokum\LaravelBoleto\Boleto\AbstractBoleto;
+use Eduardokum\LaravelBoleto\CalculoDV;
+use Eduardokum\LaravelBoleto\Contracts\Boleto\Boleto;
 use Eduardokum\LaravelBoleto\Contracts\Boleto\Boleto as BoletoContract;
+use Eduardokum\LaravelBoleto\Util;
+
 
 class Unicred extends AbstractBoleto implements BoletoContract
 {
-    /**
-     * Código do banco
-     * @var string
-     */
-    protected $codigoBanco = self::COD_BANCO_UNICRED;
 
-    /**
-     * Define as carteiras disponíveis para este banco
-     * @var array
-     */
-    protected $carteiras = ['21'];
-
-    /**
-     * Linha de local de pagamento
-     *
-     * @var string
-     */
-    protected $localPagamento = 'PAGÁVEL EM QUALQUER AGÊNCIA BANCÁRIA/CORRESPONDENTE BANCÁRIO';
-
-    /**
-     * ESPÉCIE DO DOCUMENTO: de acordo com o ramo de atividade
-     * @var string
-     */
-    protected $especiesCodigo = [
-        'DM'     => 'DM', //'Duplicata Mercantil',
-        'NP'     => 'NP', //'Nota Promissória',
-        'NS'     => 'NS', //'Nota de Seguro',
-        'CS'     => 'CS', //'Cobrança Seriada',
-        'REC'    => 'REC', //'Recibo',
-        'LC'     => 'LC', //'Letras de Câmbio',
-        'ND'     => 'ND', //'Nota de Débito',
-        'DS'     => 'DS', //'Duplicata de Serviços',
-        'Outros' => 'Outros',
-    ];
+    protected $codigoBanco = Boleto::COD_BANCO_UNICRED;
 
     /**
      * Trata-se de código utilizado para identificar mensagens especificas ao cedente, sendo
@@ -54,64 +25,90 @@ class Unicred extends AbstractBoleto implements BoletoContract
     protected $cip = '000';
 
     /**
-     * Variaveis adicionais.
-     *
-     * @var array
-     */
-    public $variaveis_adicionais = [
-        'cip'        => '000',
-        'mostra_cip' => true,
-    ];
-
-    /**
-     * Código do cliente (é código do cedente, também chamado de código do beneficiário) é o código do emissor junto ao banco e precisa ser buscado junto ao gerente de contas essa informação
+     * Local de pagamento
      *
      * @var string
      */
-    protected $codigoCliente;
+    protected $localPagamento = 'Pagável Preferencialmente na Unicred';
 
     /**
-     * Gera o Nosso Número. Formado com 11(onze) caracteres, sendo 10 dígitos
-     * para o nosso número é um digito para o digito verificador. Ex.: 9999999999-D.
-     * Obs.: O Nosso Número é um identificador do boleto, devendo ser atribuído
-     * Nosso Número diferenciado para cada um.
+     * Define as carteiras disponíveis para este banco
+     *
+     * @var array
+     */
+    protected $carteiras = [ '21' ];
+
+    /**
+     * Define a espécie do documento
+     * @var string
+     */
+    protected $especieDoc = "DM";
+
+    /**
+     * Método onde o Boleto deverá gerar o Nosso Número.
      *
      * @return string
      */
     protected function gerarNossoNumero()
     {
-        return Util::numberFormatGeral($this->getNumero(), 10) . CalculoDV::unicredNossoNumero($this->getNumero());
+        $quantidadeCaracteresNossoNumero = 11;
+        $digitoVerificador = CalculoDV::unicredNossoNumero($this->numero);
+        return Util::numberFormatGeral($this->numero . $digitoVerificador, $quantidadeCaracteresNossoNumero);
     }
 
     /**
-     * Método que retorna o nosso numero usado no boleto, formato XXXXXXXXXX-D. alguns bancos possuem algumas diferenças.
+     * Método que retorna o nosso numero usado no boleto. alguns bancos possuem algumas diferenças.
      *
      * @return string
      */
     public function getNossoNumeroBoleto()
     {
-        return substr_replace($this->getNossoNumero(), '-', -1, 0);
+        return Util::maskString($this->getNossoNumero(), '##########-#');
     }
 
     /**
-     * Método para gerar o código da posição de 20 a 44
+     * Método onde qualquer boleto deve extender para gerar o código da posição de 20 a 44
      *
      * @return string
      */
-    protected function getCampoLivre()
+    public function getCampoLivre()
     {
+
         if ($this->campoLivre) {
             return $this->campoLivre;
         }
 
-        $nossoNumero = $this->getNossoNumero();
-
-        $campoLivre = Util::numberFormatGeral($this->getAgencia(), 4); //Agência BENEFICIÁRIO (Sem o dígito verificador, completar com zeros à esquerda quando necessário)
-        $campoLivre .= Util::numberFormatGeral($this->getConta() . $this->getContaDv(), 10); //Conta do BENEFICIÁRIO (Com o dígito verificador - Completar com zeros à esquerda quando necessário)
-        $campoLivre .= Util::numberFormatGeral($nossoNumero, 11); //Nosso Número (Com o dígito verificador)
+        $campoLivre = Util::numberFormatGeral($this->agencia, 4);
+        $campoLivre .= Util::numberFormatGeral($this->conta . $this->contaDv, 10);
+        $campoLivre .= $this->getNossoNumero();
 
         return $this->campoLivre = $campoLivre;
     }
+
+     /**
+     * Seta o campo Código de Barras.
+     *
+     * @return string
+     */
+    public function setCodigoBarras($codigoBarras)
+    {
+        $this->campoCodigoBarras = $codigoBarras;
+        return $this;
+    }
+    /**
+     * Seta o campo Linha Digitável.
+     *
+     * @return string
+     */
+    public function setLinhaDigitavel($linhaDigitavel)
+    {
+        $str = substr($linhaDigitavel, 0, 5).'.'.substr($linhaDigitavel, 5, 5).' '.substr($linhaDigitavel, 10, 5);
+        $str .= '.'.substr($linhaDigitavel, 15, 6).' '.substr($linhaDigitavel, 21, 5).'.'.substr($linhaDigitavel, 26, 6);
+        $str .= ' '.substr($linhaDigitavel, 32, 1).' '.substr($linhaDigitavel, 33);
+        $this->campoLinhaDigitavel = $str;
+        return $this;
+    }
+
 
     /**
      * Método onde qualquer boleto deve extender para gerar o código da posição de 20 a 44
@@ -120,76 +117,61 @@ class Unicred extends AbstractBoleto implements BoletoContract
      *
      * @return array
      */
-    public static function parseCampoLivre($campoLivre)
+    static public function parseCampoLivre($campoLivre)
     {
         return [
-            // 'convenio' => null,
-            'agenciaDv'       => null,
-            'contaCorrenteDv' => null,
-            'agencia'         => substr($campoLivre, 0, 4),
-            'nossoNumero'     => substr($campoLivre, 14, 10),
-            'nossoNumeroDv'   => substr($campoLivre, 24, 1),
-            'nossoNumeroFull' => substr($campoLivre, 14, 11),
-            'contaCorrente'   => substr($campoLivre, 4, 10),
+            'convenio' => null,
+            'agenciaDv' => null,
+            'codigoCliente' => null,
+            'carteira' => null,
+            'nossoNumero' => substr($campoLivre, 14, 10),
+            'nossoNumeroDv' => substr($campoLivre, 24, 1),
+            'nossoNumeroFull' => substr($campoLivre, 14),
+            'agencia' => substr($campoLivre, 0, 4),
+            'contaCorrente' => substr($campoLivre, 4, 10),
+            'contaCorrenteDv' => null
         ];
     }
 
     /**
-     * AGÊNCIA / CÓDIGO DO BENEFICIÁRIO: deverá ser preenchido com o código da agência,
-     * contendo 4 (quatro) caracteres / Conta Corrente com 10 (dez) caracteres. Ex.
-     * 9999/999999999-9. Obs.: Preencher com zeros à direita quando necessário.
+     * Retorna o codigo de barras
+     *
      * @return string
+     * @throws \Exception
      */
-    public function getAgenciaCodigoBeneficiario()
+    public function getCodigoBarras()
     {
-        return $this->getAgencia() . ' / ' . Util::numberFormatGeral($this->getConta(), 9) . '-' . $this->getContaDv();
+        if (!empty($this->campoCodigoBarras)) {
+            return $this->campoCodigoBarras;
+        }
+
+        if (!$this->isValid($messages)) {
+            throw new \Exception('Campos requeridos pelo banco, aparentam estar ausentes ' . $messages);
+        }
+
+        $codigo = Util::numberFormatGeral($this->getCodigoBanco(), 3)
+            . $this->getMoeda()
+            . Util::fatorVencimento($this->getDataVencimento())
+            . Util::numberFormatGeral($this->getValor(), 10)
+            . $this->getCampoLivre();
+
+        $dv = CalculoDV::unicredCodigoBarra($codigo);
+        return $this->campoCodigoBarras = substr($codigo, 0, 4) . $dv . substr($codigo, 4);
     }
 
     /**
-     * Define o campo CIP do boleto
-     *
+     * @return int
+     */
+    public function getCip()
+    {
+        return $this->cip;
+    }
+
+    /**
      * @param int $cip
-     * @return Unicred
      */
     public function setCip($cip)
     {
         $this->cip = $cip;
-        $this->variaveis_adicionais['cip'] = $this->getCip();
-
-        return $this;
-    }
-
-    /**
-     * Retorna o campo CIP do boleto
-     *
-     * @return string
-     */
-    public function getCip()
-    {
-        return Util::numberFormatGeral($this->cip, 3);
-    }
-
-    /**
-     * Seta o código do cliente.
-     *
-     * @param mixed $codigoCliente
-     *
-     * @return Unicred
-     */
-    public function setCodigoCliente($codigoCliente)
-    {
-        $this->codigoCliente = $codigoCliente;
-
-        return $this;
-    }
-
-    /**
-     * Retorna o codigo do cliente.
-     *
-     * @return string
-     */
-    public function getCodigoCliente()
-    {
-        return $this->codigoCliente;
     }
 }

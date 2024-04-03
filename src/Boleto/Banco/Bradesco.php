@@ -69,7 +69,7 @@ class Bradesco extends AbstractBoleto implements BoletoContract
      * @var string
      */
     protected $especiesCodigo400 = [
-        'DM'  => '01', // Duplicata Mercantil
+        'DM'  => '01', // Duplicata
         'NP'  => '02', // Nota Promissória
         'NS'  => '03', // Nota de Seguro
         'CS'  => '04', // Cobrança Seriada
@@ -169,6 +169,30 @@ class Bradesco extends AbstractBoleto implements BoletoContract
             'nossoNumeroFull' => substr($campoLivre, 6, 11),
             'contaCorrente'   => substr($campoLivre, 17, 7),
         ];
+    }
+
+    /**
+     * Seta o campo Código de Barras.
+     *
+     * @return string
+     */
+    public function setCodigoBarras($codigoBarras)
+    {
+        $this->campoCodigoBarras = $codigoBarras;
+        return $this;
+    }
+    /**
+     * Seta o campo Linha Digitável.
+     *
+     * @return string
+     */
+    public function setLinhaDigitavel($linhaDigitavel)
+    {
+        $str = substr($linhaDigitavel, 0, 5).'.'.substr($linhaDigitavel, 5, 5).' '.substr($linhaDigitavel, 10, 5);
+        $str .= '.'.substr($linhaDigitavel, 15, 6).' '.substr($linhaDigitavel, 21, 5).'.'.substr($linhaDigitavel, 26, 6);
+        $str .= ' '.substr($linhaDigitavel, 32, 1).' '.substr($linhaDigitavel, 33);
+        $this->campoLinhaDigitavel = $str;
+        return $this;
     }
 
     /**

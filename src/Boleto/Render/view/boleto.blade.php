@@ -42,10 +42,13 @@
                 </div>
             @endif
             <div style="display: inline-block; vertical-align: super;">
-                <div><strong>{{ $beneficiario['nome'] }}</strong></div>
-                <div>{{ $beneficiario['documento'] }}</div>
+                <div style="font-size: 0.8125rem;"><strong>{{ $beneficiario['nome'] }}</strong></div>
                 <div>{{ $beneficiario['endereco'] }}</div>
                 <div>{{ $beneficiario['endereco2'] }}</div>
+                <div>
+                    {{ $beneficiario['documento'] }}
+                    @if($beneficiario['fone']) - {{ $beneficiario['fone'] }} @endif
+                </div>
             </div>
         </div>
         <br>

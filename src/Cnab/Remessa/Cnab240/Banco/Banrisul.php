@@ -140,29 +140,35 @@ class Banrisul extends AbstractRemessa implements RemessaContract
         if ($boleto->getStatus() == $boleto::STATUS_CUSTOM) {
             $this->add(16, 17, sprintf('%2.02s', $boleto->getComando()));
         }
-        $this->add(18, 22, Util::formatCnab('9', $this->getAgencia(), 5));
-        $this->add(23, 23, '');
-        $this->add(24, 35, Util::formatCnab('9', $this->getConta(), 12));
-        $this->add(36, 36, ! is_null($this->getContaDv()) ? $this->getContaDv() : CalculoDV::banrisulContaCorrente($this->getConta()));
-        $this->add(37, 37, '');
-        $this->add(38, 57, Util::formatCnab('9', $boleto->getNossoNumero(), 20));
+        
+        // $this->add(18, 22, Util::formatCnab('9', $this->getAgencia(), 5));
+        // $this->add(23, 23, '');
+        // $this->add(24, 35, Util::formatCnab('9', $this->getConta(), 12));
+        // $this->add(36, 36, CalculoDV::banrisulContaCorrente($this->getConta()));
+        // $this->add(37, 37, '');
+
+		$this->add(18, 37, '');
+
+		$this->add(38, 47, Util::formatCnab('9', $boleto->getNossoNumero(), 10));
+		$this->add(48, 57, '');
         $this->add(58, 58, $this->getCarteira());
         $this->add(59, 59, '1'); //'1' = Com Cadastramento
-        $this->add(60, 60, '');
+        $this->add(60, 60, '1'); //1 = Documento tradicional
         $this->add(61, 61, '2'); //2 – Cliente emite o bloqueto
-        $this->add(62, 62, '');
-        $this->add(63, 77, Util::formatCnab('9', $boleto->getNumeroDocumento(), 15));
+        $this->add(62, 62, '2'); //2 - Cliente distribui
+        $this->add(63, 77, Util::formatCnab('X', $boleto->getNumeroDocumento(), 15));
         $this->add(78, 85, $boleto->getDataVencimento()->format('dmY'));
         $this->add(86, 100, Util::formatCnab('9', $boleto->getValor(), 15, 2));
-        $this->add(101, 105, '00000');
-        $this->add(106, 106, '0');
+        $this->add(101, 105, '');
+        $this->add(106, 106, '');
         $this->add(107, 108, Util::formatCnab('9', $boleto->getEspecieDocCodigo(), 2));
         $this->add(109, 109, Util::formatCnab('9', $boleto->getAceite(), 1));
         $this->add(110, 117, $boleto->getDataDocumento()->format('dmY'));
         $this->add(118, 118, $boleto->getJuros() ? '1' : '3'); //'1' = Valor por Dia, '3' = Isento
-        $this->add(119, 126, $boleto->getDataVencimento()->format('dmY'));
+        $this->add(119, 126, $boleto->getJurosApos() == 0 ? $boleto->getDataVencimento()->format('dmY') :
+			$boleto->getDataVencimentoApos()->format('dmY'));
         $this->add(127, 141, Util::formatCnab('9', $boleto->getMoraDia(), 15, 2)); //Valor da mora/dia ou Taxa mensal
-        $this->add(142, 142, '1'); // '1' = Valor Fixo Até a Data Informada
+        $this->add(142, 142, $boleto->getDesconto() > 0 ? '1' : '0'); // '1' = Valor Fixo Até a Data Informada
         $this->add(143, 150, $boleto->getDesconto() > 0 ? $boleto->getDataDesconto()->format('dmY') : '00000000');
         $this->add(151, 165, Util::formatCnab('9', $boleto->getDesconto(), 15, 2));
         $this->add(166, 180, Util::formatCnab('9', 0, 15, 2));
@@ -173,11 +179,12 @@ class Banrisul extends AbstractRemessa implements RemessaContract
             $this->add(221, 221, self::PROTESTO_DIAS_CORRIDOS);
         }
         $this->add(222, 223, Util::formatCnab('9', $boleto->getDiasProtesto(), 2));
-        $this->add(224, 224, '2'); // 2 – Reservado
+        $this->add(224, 224, '0');
         $this->add(225, 227, '000');
         $this->add(228, 229, Util::formatCnab('9', $boleto->getMoeda(), 2));
-        $this->add(230, 239, '0000000000');
-        $this->add(240, 240, '');
+        $this->add(230, 233, '000');
+        $this->add(234, 239, '805076');
+        $this->add(240, 240, '1');
 
         return $this;
     }
@@ -213,10 +220,10 @@ class Banrisul extends AbstractRemessa implements RemessaContract
         $this->add(134, 136, Util::formatCnab('9', Util::onlyNumbers(substr($boleto->getPagador()->getCep(), 6, 9)), 3));
         $this->add(137, 151, Util::formatCnab('X', $boleto->getPagador()->getCidade(), 15));
         $this->add(152, 153, Util::formatCnab('X', $boleto->getPagador()->getUf(), 2));
-        $this->add(154, 154, '0');
-        $this->add(155, 169, '000000000000000');
+        $this->add(154, 154, '');
+        $this->add(155, 169, '');
         $this->add(170, 209, '');
-        $this->add(210, 212, '000');
+        $this->add(210, 212, '');
         $this->add(213, 240, '');
 
         if ($boleto->getSacadorAvalista()) {
@@ -281,31 +288,32 @@ class Banrisul extends AbstractRemessa implements RemessaContract
         $this->add(9, 17, '');
         $this->add(18, 18, strlen(Util::onlyNumbers($this->getBeneficiario()->getDocumento())) == 14 ? 2 : 1);
         $this->add(19, 32, Util::formatCnab('9', Util::onlyNumbers($this->getBeneficiario()->getDocumento()), 14));
-        $this->add(33, 52, Util::formatCnab('9', Util::onlyNumbers($this->getCodigoCliente()), 20));
-        $this->add(53, 57, Util::formatCnab('9', $this->getAgencia(), 5));
-        $this->add(58, 58, '');
-        $this->add(59, 63, '000EE');
-        $this->add(64, 70, Util::formatCnab('9', $this->getConta(), 7));
-        $this->add(71, 71, ! is_null($this->getContaDv()) ? $this->getContaDv() : CalculoDV::banrisulContaCorrente($this->getConta()));
-        $this->add(72, 72, '');
+        $this->add(33, 52, Util::formatCnab('X', Util::onlyNumbers($this->getCodigoCliente()), 20));
+        // $this->add(53, 57, Util::formatCnab('9', $this->getAgencia(), 5));
+		// $this->add(58, 72, '');
+        // $this->add(58, 58, CalculoDV::banrisulAgencia($this->getAgencia()));
+        // $this->add(59, 63, '000EE');
+        // $this->add(64, 70, Util::formatCnab('9', $this->getConta(), 7));
+        // $this->add(71, 71, ! is_null($this->getContaDv()) ? $this->getContaDv() : CalculoDV::banrisulContaCorrente($this->getConta()));
+        // $this->add(72, 72, '');
+        $this->add(53, 72, '');
         $this->add(73, 102, Util::formatCnab('X', $this->getBeneficiario()->getNome(), 30));
         $this->add(103, 132, Util::formatCnab('X', 'BANRISUL', 30));
         $this->add(133, 142, '');
         $this->add(143, 143, 1);
         $this->add(144, 151, $this->getDataRemessa('dmY'));
         $this->add(152, 157, date('His'));
-        $this->add(158, 163, '000000');
-        $this->add(164, 166, '040');
+        $this->add(158, 163, Util::formatCnab('9', $this->getIdremessa(), 6));
+        $this->add(164, 166, '103');
         $this->add(167, 171, '00000');
-        $this->add(172, 179, '');
-        $this->add(180, 181, 'BE');
-        $this->add(182, 191, '');
+        $this->add(172, 191, '');
         $this->add(192, 211, '');
-        $this->add(212, 222, '');
-        $this->add(223, 225, '');
-        $this->add(226, 228, '000');
-        $this->add(229, 230, '');
-        $this->add(231, 240, '');
+        // $this->add(212, 222, '');
+        // $this->add(223, 225, '');
+        // $this->add(226, 228, '000');
+        // $this->add(229, 230, '');
+        // $this->add(231, 240, '');
+        $this->add(212, 240, '');
 
         return $this;
     }
@@ -327,16 +335,17 @@ class Banrisul extends AbstractRemessa implements RemessaContract
         $this->add(9, 9, 'R');
         $this->add(10, 11, '01');
         $this->add(12, 13, '');
-        $this->add(14, 16, '020');
+        $this->add(14, 16, '060');
         $this->add(17, 17, '');
         $this->add(18, 18, strlen(Util::onlyNumbers($this->getBeneficiario()->getDocumento())) == 14 ? 2 : 1);
         $this->add(19, 33, Util::formatCnab('9', Util::onlyNumbers($this->getBeneficiario()->getDocumento()), 15));
-        $this->add(34, 53, Util::formatCnab('9', Util::onlyNumbers($this->getCodigoCliente()), 20));
-        $this->add(54, 58, Util::formatCnab('9', $this->getAgencia(), 5));
-        $this->add(59, 59, '');
-        $this->add(60, 71, Util::formatCnab('9', $this->getConta(), 12));
-        $this->add(72, 72, ! is_null($this->getContaDv()) ? $this->getContaDv() : CalculoDV::banrisulContaCorrente($this->getConta()));
-        $this->add(73, 73, '');
+        $this->add(34, 53, Util::formatCnab('X', Util::onlyNumbers($this->getCodigoCliente()), 20));
+        // $this->add(54, 58, Util::formatCnab('9', $this->getAgencia(), 5));
+        // $this->add(59, 59, '');
+        // $this->add(60, 71, Util::formatCnab('9', $this->getConta(), 12));
+        // $this->add(72, 72, ! is_null($this->getContaDv()) ? $this->getContaDv() : CalculoDV::banrisulContaCorrente($this->getConta()));
+        // $this->add(73, 73, '');
+        $this->add(54, 73, '');
         $this->add(74, 103, Util::formatCnab('X', $this->getBeneficiario()->getNome(), 30));
         $this->add(104, 183, '');
         $this->add(184, 191, '00000000');

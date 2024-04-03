@@ -283,10 +283,18 @@ class Banrisul extends AbstractRetorno implements RetornoCnab240
                 ->setValorDesconto(Util::nFloat($this->rem(33, 47, $detalhe) / 100, 2, false))
                 ->setValorAbatimento(Util::nFloat($this->rem(48, 62, $detalhe) / 100, 2, false))
                 ->setValorIOF(Util::nFloat($this->rem(63, 77, $detalhe) / 100, 2, false))
-                ->setValorRecebido(Util::nFloat($this->rem(78, 92, $detalhe) / 100, 2, false))
-                ->setValorTarifa($d->getValorRecebido() - Util::nFloat($this->rem(93, 107, $detalhe) / 100, 2, false))
+                // ->setValorRecebido(Util::nFloat($this->rem(78, 92, $detalhe) / 100, 2, false))
+                // ->setValorTarifa($d->getValorRecebido() - Util::nFloat($this->rem(93, 107, $detalhe) / 100, 2, false))
                 ->setDataOcorrencia($this->rem(138, 145, $detalhe))
                 ->setDataCredito($this->rem(146, 153, $detalhe));
+                
+                $valor_recebido = $this->rem(93, 107, $detalhe);
+
+				if ($valor_recebido == "" || floatval($valor_recebido) == 0) {
+					$valor_recebido = $this->rem(78, 92, $detalhe);
+				}
+
+                $d->setValorRecebido(Util::nFloat($valor_recebido/100, 2, false));
         }
 
         return true;

@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>Boletos</title>
+    <title>{{ $titulo }}</title>
     <style type="text/css">
         {!! $css !!}
     </style>

@@ -27,8 +27,9 @@ class Sicredi extends AbstractRetorno implements RetornoCnab400
         '02' => 'Entrada confirmada',
         '03' => 'Entrada rejeitada',
         '06' => 'Liquidação normal',
+        '07' => 'Intenção de pagamento (agendamento)',
         '09' => 'Baixado automaticamente via arquivo',
-        '10' => 'Baixado conforme instruções da cooperativa de crédito',
+        '10' => 'Baixado conforme instruções da cooperativa',
         '12' => 'Abatimento concedido',
         '13' => 'Abatimento cancelado',
         '14' => 'Vencimento alterado',
@@ -46,6 +47,14 @@ class Sicredi extends AbstractRetorno implements RetornoCnab400
         '33' => 'Confirmação de pedido de alteração de outros dados',
         '34' => 'Retirado de cartório e manutenção em carteira',
         '35' => 'Aceite do pagador',
+        '78' => 'Confirmação de recebimento de pedido de negativação',
+        '79' => 'Confirmação de recebimento de pedido de exclusão de negativação',
+        '80' => 'Confirmação de entrada de negativação',
+        '81' => 'Entrada de negativação rejeitada',
+        '82' => 'Confirmação de exclusão de negativação',
+        '83' => 'Exclusão de negativação rejeitada',
+        '84' => 'Exclusão de negativação por outros motivos',
+        '85' => 'Ocorrência informacional por outros motivos',
     ];
 
     /**
@@ -281,7 +290,7 @@ class Sicredi extends AbstractRetorno implements RetornoCnab400
         } elseif ($d->hasOcorrencia('23')) {
             $this->totais['protestados']++;
             $d->setOcorrenciaTipo($d::OCORRENCIA_PROTESTADA);
-        } elseif ($d->hasOcorrencia('33')) {
+        } elseif ($d->hasOcorrencia('14', '33')) {
             $this->totais['alterados']++;
             $d->setOcorrenciaTipo($d::OCORRENCIA_ALTERACAO);
         } elseif ($d->hasOcorrencia('03', '24', '27', '30', '32')) {
@@ -317,7 +326,7 @@ class Sicredi extends AbstractRetorno implements RetornoCnab400
             } elseif ($d->getOcorrenciaTipo() != $d::OCORRENCIA_ERRO) {
                 $ocorrencia = Util::appendStrings($d->getOcorrenciaDescricao(), Arr::get($this->rejeicoes, $msgAdicRetorno[0], ''), Arr::get($this->rejeicoes, $msgAdicRetorno[1], ''), Arr::get($this->rejeicoes, $msgAdicRetorno[2], ''), Arr::get($this->rejeicoes, $msgAdicRetorno[3], ''), Arr::get($this->rejeicoes, $msgAdicRetorno[4], ''));
                 $d->setOcorrenciaDescricao($ocorrencia);
-            } else {
+            } else if ($d->getOcorrenciaTipo() != 4) { // 4 = OCORRENCIA_ALTERACAO
                 $error = [];
                 $error[] = Arr::get($this->rejeicoes, $msgAdicRetorno[0], '');
                 $error[] = Arr::get($this->rejeicoes, $msgAdicRetorno[1], '');

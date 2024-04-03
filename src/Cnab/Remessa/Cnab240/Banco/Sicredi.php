@@ -117,7 +117,8 @@ class Sicredi extends AbstractRemessa implements RemessaContract
         $this->add(60, 60, '1'); //'1' = Tradicional
         $this->add(61, 61, '2'); //'2' = Beneficiário emite
         $this->add(62, 62, '2'); //'2' = Beneficiário distribui
-        $this->add(63, 77, Util::formatCnab('9', $boleto->getNumeroDocumento(), 15));
+        $this->add(63, 72, Util::formatCnab('9', $boleto->getNumeroDocumento(), 10));
+        $this->add(73, 77, '');
         $this->add(78, 85, $boleto->getDataVencimento()->format('dmY'));
         $this->add(86, 100, Util::formatCnab('9', $boleto->getValor(), 15, 2));
         $this->add(101, 105, '00000');
@@ -129,7 +130,7 @@ class Sicredi extends AbstractRemessa implements RemessaContract
         $this->add(119, 126, $boleto->getJurosApos() == 0 ? '00000000' :
             $boleto->getDataVencimentoApos()->format('dmY'));
         $this->add(127, 141, Util::formatCnab('9', $boleto->getMoraDia(), 15, 2)); //Valor da mora/dia ou Taxa mensal
-        $this->add(142, 142, $boleto->getDesconto() > 0 ? '1' : '0');
+        $this->add(142, 142, $boleto->getDesconto() > 0 ? '1' : '0'); //0 = SEM DESCONTO | 1 = VALOR FIXO | 2 = PERCENTUAL
         $this->add(143, 150, $boleto->getDesconto() > 0 ? $boleto->getDataDesconto()->format('dmY') : '00000000');
         $this->add(151, 165, Util::formatCnab('9', $boleto->getDesconto(), 15, 2));
         $this->add(166, 180, Util::formatCnab('9', 0, 15, 2));

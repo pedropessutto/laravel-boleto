@@ -144,7 +144,8 @@ class Bradesco extends AbstractRetorno implements RetornoCnab400
             $this->getHeader()
                 ->setAgencia($this->rem(25, 29, $detalhe))
                 ->setConta($this->rem(30, 36, $detalhe))
-                ->setContaDv($this->rem(37, 37, $detalhe));
+                ->setContaDv($this->rem(37, 37, $detalhe))
+                ->setCodigoCliente($this->rem(4, 17, $detalhe));
         }
 
         if ($this->rem(1, 1, $detalhe) == 4) {
@@ -152,8 +153,8 @@ class Bradesco extends AbstractRetorno implements RetornoCnab400
         }
 
         $d = $this->detalheAtual();
-        $d->setCarteira($this->rem(108, 108, $detalhe))
-            ->setNossoNumero($this->rem(71, 82, $detalhe))
+        $d->setCarteira($this->rem(22, 24, $detalhe))
+            ->setNossoNumero($this->rem(71, 81, $detalhe))
             ->setNumeroDocumento($this->rem(117, 126, $detalhe))
             ->setNumeroControle($this->rem(38, 62, $detalhe))
             ->setOcorrencia($this->rem(109, 110, $detalhe))

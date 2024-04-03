@@ -95,7 +95,8 @@ class Bb extends AbstractRetorno implements RetornoCnab240
         '06' => 'Tipo/Número de Inscrição do Beneficiário Inválidos',
         '07' => 'Agência/Conta/DV Inválido',
         '08' => 'Nosso Número Inválido',
-        '09' => 'Nosso Número Duplicado',
+        // '09' => 'Nosso Número Duplicado',
+        '09' => 'Conforme Instrução da Agência',
         '10' => 'Carteira Inválida',
         '11' => 'Forma de Cadastramento do Título Inválido',
         '12' => 'Tipo de Documento Inválido',
@@ -342,7 +343,7 @@ class Bb extends AbstractRetorno implements RetornoCnab240
                 ->setValorAbatimento(Util::nFloat($this->rem(48, 62, $detalhe) / 100, 2, false))
                 ->setValorIOF(Util::nFloat($this->rem(63, 77, $detalhe) / 100, 2, false))
                 ->setValorRecebido(Util::nFloat($this->rem(78, 92, $detalhe) / 100, 2, false))
-                ->setValorTarifa($d->getValorRecebido() - Util::nFloat($this->rem(93, 107, $detalhe) / 100, 2, false))
+                // ->setValorTarifa($d->getValorRecebido() - Util::nFloat($this->rem(93, 107, $detalhe) / 100, 2, false))
                 ->setValorOutrasDespesas(Util::nFloat($this->rem(108, 122, $detalhe) / 100, 2, false))
                 ->setValorOutrosCreditos(Util::nFloat($this->rem(123, 137, $detalhe) / 100, 2, false))
                 ->setDataOcorrencia($this->rem(138, 145, $detalhe))

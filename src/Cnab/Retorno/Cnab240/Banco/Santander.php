@@ -237,7 +237,7 @@ class Santander extends AbstractRetorno implements RetornoCnab240
             } elseif ($d->hasOcorrencia('09')) {
                 $this->totais['baixados']++;
                 $d->setOcorrenciaTipo($d::OCORRENCIA_BAIXADA);
-            } elseif ($d->hasOcorrencia('19')) {
+            } elseif ($d->hasOcorrencia('19','23','25')) {
                 $this->totais['protestados']++;
                 $d->setOcorrenciaTipo($d::OCORRENCIA_PROTESTADA);
             } elseif ($d->hasOcorrencia('27', '30')) {
