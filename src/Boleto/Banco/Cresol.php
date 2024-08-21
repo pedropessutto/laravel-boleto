@@ -106,7 +106,7 @@ class Cresol extends AbstractBoleto implements BoletoContract
      */
     public function getNossoNumeroBoleto()
     {
-        return Util::numberFormatGeral($this->getCarteira(), 2) . ' / ' . substr_replace($this->getNossoNumero(), '-', -1, 0);
+        return Util::numberFormatGeral($this->getCarteira(), 2) . '/' . substr_replace($this->getNossoNumero(), '-', -1, 0);
     }
 
     /**
@@ -123,8 +123,8 @@ class Cresol extends AbstractBoleto implements BoletoContract
         $campoLivre = Util::numberFormatGeral($this->getAgencia(), 4);
         $campoLivre .= Util::numberFormatGeral($this->getCarteira(), 2);
         $campoLivre .= Util::numberFormatGeral($this->getNumero(), 11);
-        $campoLivre .= Util::numberFormatGeral($this->getConta(), 7);
-        $campoLivre .= '0';
+        $campoLivre .= Util::numberFormatGeral($this->getConta(), 8);
+        $campoLivre .= '2'; // verificar se é '2' fixo
 
         return $this->campoLivre = $campoLivre;
     }
