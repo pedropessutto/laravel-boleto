@@ -263,7 +263,8 @@ class Santander extends AbstractRetorno implements RetornoCnab400
             ->setServicoCodigo($this->rem(10, 11, $header))
             ->setServico($this->rem(12, 26, $header))
             ->setAgencia($this->rem(27, 30, $header))
-            ->setConta($this->rem(39, 46, $header))
+            ->setConta($this->rem(31, 38, $header)) // Conta Movimento
+//          ->setConta($this->rem(39, 46, $header)) // Conta Cobrança
             ->setData($this->rem(95, 100, $header))
             ->setCodigoCliente($this->rem(109, 117, $header));
 
