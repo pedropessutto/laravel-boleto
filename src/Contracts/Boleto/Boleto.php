@@ -179,6 +179,13 @@ interface Boleto
      *
      * @return mixed
      */
+    public function getProtestoPersonalizado($default = null);
+
+    /**
+     * @param int $default
+     *
+     * @return mixed
+     */
     public function getDiasBaixaAutomatica($default = 0);
 
     /**

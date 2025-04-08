@@ -118,6 +118,13 @@ abstract class AbstractBoleto implements BoletoContract
     public $diasProtesto = 0;
 
     /**
+     * Instrução pers. para protesto
+     *
+     * @var int
+     */
+    public $protestoPersonalizado = 0;
+
+    /**
      * Dias para baixa automática
      *
      * @var int
@@ -1393,6 +1400,22 @@ abstract class AbstractBoleto implements BoletoContract
     }
 
     /**
+     * Seta instrução personalizada para protesto
+     *
+     * @param int $protestoPersonalizado
+     *
+     * @return AbstractBoleto
+     * @throws ValidationException
+     */
+    public function setProtestoPersonalizado($protestoPersonalizado)
+    {
+        $protestoPersonalizado = (int) $protestoPersonalizado;
+        $this->protestoPersonalizado = $protestoPersonalizado > 0 && $protestoPersonalizado < 10 ? $protestoPersonalizado : 0;
+
+        return $this;
+    }
+
+    /**
      * Retorna os diasProtesto
      *
      * @param int $default
@@ -1400,6 +1423,18 @@ abstract class AbstractBoleto implements BoletoContract
      * @return int
      */
     public function getDiasProtesto($default = 0)
+    {
+        return $this->diasProtesto > 0 ? $this->diasProtesto : $default;
+    }
+
+    /**
+     * Retorna o protesto personalizado
+     *
+     * @param int $default
+     *
+     * @return mixed
+     */
+    public function getProtestoPersonalizado($default = 0)
     {
         return $this->diasProtesto > 0 ? $this->diasProtesto : $default;
     }
