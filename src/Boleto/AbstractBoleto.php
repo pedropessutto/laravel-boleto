@@ -1436,7 +1436,7 @@ abstract class AbstractBoleto implements BoletoContract
      */
     public function getProtestoPersonalizado($default = 0)
     {
-        return $this->diasProtesto > 0 ? $this->diasProtesto : $default;
+        return $this->protestoPersonalizado > 0 && $this->protestoPersonalizado < 10 ? $this->protestoPersonalizado : $default;
     }
 
     /**
