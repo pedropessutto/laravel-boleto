@@ -31,7 +31,7 @@ class Santander extends AbstractRetorno implements RetornoCnab400
         '07' => 'Liquidação por conta',
         '08' => 'Liquidação por saldo',
         '09' => 'Baixa automática',
-        '10' => 'Títutlo baixado conforme instrução ou por título protestado',
+        '10' => 'Títutlo baixado conforme instrução',
         '11' => 'Em ser',
         '12' => 'Abatimento concedido',
         '13' => 'Abatimento cancelado',
@@ -319,15 +319,18 @@ class Santander extends AbstractRetorno implements RetornoCnab400
         } elseif ($d->hasOcorrencia('02')) {
             $this->totais['entradas']++;
             $d->setOcorrenciaTipo($d::OCORRENCIA_ENTRADA);
-        } elseif ($d->hasOcorrencia('09')) {
+        } elseif ($d->hasOcorrencia('09', '10')) {  // Ajuste 11/06/2025 - '10' baixa boleto | '15' - Encaminhado p/ cartório
             $this->totais['baixados']++;
             $d->setOcorrenciaTipo($d::OCORRENCIA_BAIXADA);
-        } elseif ($d->hasOcorrencia('10')) {
-            $this->totais['protestados']++;
-            $d->setOcorrenciaTipo($d::OCORRENCIA_PROTESTADA);
+//        } elseif ($d->hasOcorrencia('10')) {      // Ajuste 11/06/2025 - '10' baixa boleto | '15' - Encaminhado p/ cartório
+//            $this->totais['protestados']++;
+//            $d->setOcorrenciaTipo($d::OCORRENCIA_PROTESTADA);
         } elseif ($d->hasOcorrencia('14')) {
             $this->totais['alterados']++;
             $d->setOcorrenciaTipo($d::OCORRENCIA_ALTERACAO);
+        } elseif ($d->hasOcorrencia('15')) {        // Ajuste 11/06/2025 - '10' baixa boleto | '15' - Encaminhado p/ cartório
+            $this->totais['protestados']++;
+            $d->setOcorrenciaTipo($d::OCORRENCIA_PROTESTADA);
         } elseif ($d->hasOcorrencia('03')) {
             $this->totais['erros']++;
             $errorsRetorno = str_split(sprintf('%09s', $this->rem(137, 145, $detalhe)), 3) + array_fill(0, 3, '');
