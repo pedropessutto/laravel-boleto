@@ -48,6 +48,8 @@ class Pdf extends AbstractPdf implements PdfContract
 
     protected $localizacao_pix = self::PIX_INSTRUCAO;
 
+    protected $localizacao_logo = 1;
+
     public function __construct()
     {
         parent::__construct('P', 'mm', 'A4');
@@ -149,7 +151,7 @@ class Pdf extends AbstractPdf implements PdfContract
         $this->Cell(0, $this->desc, $this->_($this->boleto[$i]->getBeneficiario()->getEndereco()), 0, 1);
         $this->Cell(56);
         $this->Cell(0, $this->desc, $this->_($this->boleto[$i]->getBeneficiario()->getCepCidadeUf()), 0, 1);
-        $this->Ln(8);
+        $this->Ln(6);
 
         return $this;
     }
@@ -161,6 +163,7 @@ class Pdf extends AbstractPdf implements PdfContract
      */
     protected function Topo($i)
     {
+        $this->Ln(2);
         $this->Image($this->boleto[$i]->getLogoBanco(), 20, ($this->GetY() - 2), 28);
         $this->Cell(29, 6, '', 'B');
         $this->SetFont('', 'B', 13);
@@ -240,6 +243,7 @@ class Pdf extends AbstractPdf implements PdfContract
      */
     protected function Bottom($i)
     {
+        $this->Ln(2);
         $this->Image($this->boleto[$i]->getLogoBanco(), 20, ($this->GetY() - 2), 28);
         $this->Cell(29, 6, '', 'B');
         $this->SetFont($this->PadraoFont, 'B', 13);
@@ -534,6 +538,14 @@ class Pdf extends AbstractPdf implements PdfContract
     }
 
     /**
+	 * 1: Recibo do pagador; 2: Ficha de compensação
+	 */
+	public function setLocalizacaoLogo($localizacao_logo)
+	{
+		$this->localizacao_logo = $localizacao_logo;
+	}
+
+    /**
      * Função para gerar o boleto
      *
      * @param string $dest tipo de destino const BOLETOPDF_DEST_STANDARD | BOLETOPDF_DEST_DOWNLOAD | BOLETOPDF_DEST_SAVE | BOLETOPDF_DEST_STRING
@@ -551,7 +563,13 @@ class Pdf extends AbstractPdf implements PdfContract
         for ($i = 0; $i < $this->totalBoletos; $i++) {
             $this->SetDrawColor('0', '0', '0');
             $this->AddPage();
-            $this->instrucoes($i)->logoEmpresa($i)->Topo($i)->Bottom($i)->codigoBarras($i);
+            
+            if($this->localizacao_logo == 1) {
+				$this->instrucoes($i)->logoEmpresa($i)->Topo($i)->Bottom($i)->codigoBarras($i);
+			}
+			elseif ($this->localizacao_logo == 2) {
+				$this->instrucoes($i)->Topo($i)->logoEmpresa($i)->Bottom($i)->codigoBarras($i);
+			}
         }
 
         if ($this->print) {
