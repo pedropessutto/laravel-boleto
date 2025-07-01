@@ -95,6 +95,14 @@ class Html implements HtmlContract
 		$this->titulo = $titulo;
 	}
 
+    /**
+	 * 1: Recibo do pagador; 2: Ficha de compensação
+	 */
+    public function setLocalizacaoLogo($localizacao_logo)
+	{
+		$this->localizacao_logo = $localizacao_logo;
+	}
+
 
     /**
      * Adiciona o boletos
@@ -237,7 +245,8 @@ class Html implements HtmlContract
             'css'                   => $this->writeCss(),
             'imprimir_carregamento' => (bool) $this->print,
             'mostrar_instrucoes'    => (bool) $this->showInstrucoes,
-            'titulo' => $this->titulo,
+            'titulo'                => $this->titulo,
+            'localizacao_logo' 		=> $this->localizacao_logo
         ])->render();
     }
 

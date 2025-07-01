@@ -35,23 +35,26 @@
 
         <div class="linha-pontilhada noprint" style="margin-bottom: 20px;">Recibo do pagador</div>
 
-        <div class="info-empresa">
-            @if ($logo)
-                <div style="display: inline-block;">
-                    <img alt="logo" src="{{ $logo_base64 }}"/>
-                </div>
-            @endif
-            <div style="display: inline-block; vertical-align: super;">
-                <div style="font-size: 0.8125rem;"><strong>{{ $beneficiario['nome'] }}</strong></div>
-                <div>{{ $beneficiario['endereco'] }}</div>
-                <div>{{ $beneficiario['endereco2'] }}</div>
-                <div>
-                    {{ $beneficiario['documento'] }}
-                    @if($beneficiario['fone']) - {{ $beneficiario['fone'] }} @endif
-                </div>
-            </div>
-        </div>
-        <br>
+        @if($localizacao_logo == 1)
+			<div class="info-empresa">
+				@if ($logo)
+					<div style="display: inline-block;">
+						<img alt="logo" src="{{ $logo_base64 }}"/>
+					</div>
+				@endif
+				<div style="display: inline-block; vertical-align: super;">
+					<div style="font-size: 0.8125rem;"><strong>{{ $beneficiario['nome'] }}</strong></div>
+					<div>{{ $beneficiario['endereco'] }}</div>
+					<div>{{ $beneficiario['endereco2'] }}</div>
+					<div>
+						{{ $beneficiario['documento'] }}
+						@if($beneficiario['fone']) - {{ $beneficiario['fone'] }} @endif
+					</div>
+				</div>
+			</div>
+
+			<br>
+		@endif
 
         <table class="table-boleto" cellpadding="0" cellspacing="0" border="0">
             <tbody>
@@ -172,6 +175,27 @@
         <br>
         <div class="linha-pontilhada">Corte na linha pontilhada</div>
         <br>
+
+        @if($localizacao_logo == 2)
+			<div class="info-empresa">
+				@if ($logo)
+					<div style="display: inline-block;">
+						<img alt="logo" src="{{ $logo_base64 }}"/>
+					</div>
+				@endif
+				<div style="display: inline-block; vertical-align: super;">
+					<div style="font-size: 0.8125rem;"><strong>{{ $beneficiario['nome'] }}</strong></div>
+					<div>{{ $beneficiario['endereco'] }}</div>
+					<div>{{ $beneficiario['endereco2'] }}</div>
+					<div>
+						{{ $beneficiario['documento'] }}
+						@if($beneficiario['fone']) - {{ $beneficiario['fone'] }} @endif
+					</div>
+				</div>
+			</div>
+
+			<br>
+		@endif
 
         <!-- Ficha de compensação -->
         @include('BoletoHtmlRender::partials/ficha-compensacao')
