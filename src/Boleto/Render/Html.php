@@ -39,6 +39,10 @@ class Html implements HtmlContract
      */
 	private $titulo = 'Boletos';
 
+    /**
+     * @var string
+     */
+	private $localizacao_logo = 1;
 
     /**
      * @var string
