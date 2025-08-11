@@ -302,7 +302,12 @@ class Caixa extends AbstractRemessa implements RemessaContract
         $this->add(144, 151, $this->getDataRemessa('dmY'));
         $this->add(152, 157, date('His'));
         $this->add(158, 163, Util::formatCnab('9', $this->getIdremessa(), 6));
-        $this->add(164, 166, '107');
+        if (strlen($this->getCodigoCliente()) == 7) {
+            $this->add(164, 166, '107');
+        }
+        else {
+            $this->add(164, 166, '101');
+        }
         $this->add(167, 171, '00000');
         $this->add(172, 191, '');
         $this->add(192, 211, Util::formatCnab('X', 'REMESSA-PRODUCAO', 20));
@@ -329,7 +334,12 @@ class Caixa extends AbstractRemessa implements RemessaContract
         $this->add(9, 9, 'R');
         $this->add(10, 11, '01');
         $this->add(12, 13, '00');
-        $this->add(14, 16, '060');
+        if (strlen($this->getCodigoCliente()) == 7) {
+            $this->add(14, 16, '067');
+        }
+        else {
+            $this->add(14, 16, '060');
+        }
         $this->add(17, 17, '');
         $this->add(18, 18, strlen(Util::onlyNumbers($this->getBeneficiario()->getDocumento())) == 14 ? 2 : 1);
         $this->add(19, 33, Util::formatCnab('9', Util::onlyNumbers($this->getBeneficiario()->getDocumento()), 15));
