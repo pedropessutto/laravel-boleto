@@ -205,7 +205,7 @@ class Cresol extends AbstractRemessa implements RemessaContract
         $this->add(127, 139, Util::formatCnab('9', $boleto->getValor(), 13, 2));
         $this->add(140, 142, '');
         $this->add(143, 147, '');
-        $this->add(148, 149, $boleto->getEspecieDocCodigo());
+        $this->add(148, 149, $boleto->getEspecieDocCodigo('01', 400));
         $this->add(150, 150, '');
         $this->add(151, 156, $boleto->getDataDocumento()->format('dmy'));
         $this->add(157, 158, '');

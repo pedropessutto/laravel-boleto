@@ -49,16 +49,18 @@ class Cresol extends AbstractBoleto implements BoletoContract
      * @var string
      */
     protected $especiesCodigo400 = [
-        'DM'  => '01', // Duplicata Mercantil
-        'NP'  => '02', // Nota Promissória
-        'NS'  => '03', // Nota de Seguro
-        'CS'  => '04', // Cobrança Seriada
-        'RC'  => '05', // Recibo
-        'LC'  => '10', // Letra de Câmbio
-        'ND'  => '11', // Nota de Débito
-        'DS'  => '12', // Duplicata de Serviço
-        'CC'  => '31', // Cartão de Crédito
-        'BDP' => '32', // Boleto de Proposta
+        'CH'  => '01', // Cheque
+        'DM'  => '02', // Duplicata Mercantil
+        'DS'  => '04', // Duplicata de serviço
+        'DR'  => '06', // Duplicata rural
+        'LC'  => '07', // Letra de Câmbio
+        'NP'  => '12', // Nota Promissória
+        'RC'  => '17', // Recibo
+        'ND'  => '19', // Nota de Débito
+        'W'   => '26', // Warrant
+        'DAE' => '27', // Divida Ativa de Estado
+        'DAM' => '28', // Divida Ativa de Municipio
+        'DAU' => '29', // Divida Ativa União
         'O'   => '99', // Outros
     ];
 
