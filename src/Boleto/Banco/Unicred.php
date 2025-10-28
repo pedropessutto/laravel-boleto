@@ -139,25 +139,25 @@ class Unicred extends AbstractBoleto implements BoletoContract
      * @return string
      * @throws \Exception
      */
-    public function getCodigoBarras()
-    {
-        if (!empty($this->campoCodigoBarras)) {
-            return $this->campoCodigoBarras;
-        }
-
-        if (!$this->isValid($messages)) {
-            throw new \Exception('Campos requeridos pelo banco, aparentam estar ausentes ' . $messages);
-        }
-
-        $codigo = Util::numberFormatGeral($this->getCodigoBanco(), 3)
-            . $this->getMoeda()
-            . Util::fatorVencimento($this->getDataVencimento())
-            . Util::numberFormatGeral($this->getValor(), 10)
-            . $this->getCampoLivre();
-
-        $dv = CalculoDV::unicredCodigoBarra($codigo);
-        return $this->campoCodigoBarras = substr($codigo, 0, 4) . $dv . substr($codigo, 4);
-    }
+//    public function getCodigoBarras()
+//    {
+//        if (!empty($this->campoCodigoBarras)) {
+//            return $this->campoCodigoBarras;
+//        }
+//
+//        if (!$this->isValid($messages)) {
+//            throw new \Exception('Campos requeridos pelo banco, aparentam estar ausentes ' . $messages);
+//        }
+//
+//        $codigo = Util::numberFormatGeral($this->getCodigoBanco(), 3)
+//            . $this->getMoeda()
+//            . Util::fatorVencimento($this->getDataVencimento())
+//            . Util::numberFormatGeral($this->getValor(), 10)
+//            . $this->getCampoLivre();
+//
+//        $dv = CalculoDV::unicredCodigoBarra($codigo);
+//        return $this->campoCodigoBarras = substr($codigo, 0, 4) . $dv . substr($codigo, 4);
+//    }
 
     /**
      * @return int
