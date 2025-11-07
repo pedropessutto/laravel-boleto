@@ -45,6 +45,10 @@ abstract class AbstractAPI implements Api
 
     protected $beneficiario;
 
+    protected $access_token_cache_key;
+
+    protected $refresh_token_cache_key;
+
     private $curl = null;
 
     private $responseHttpCode = null;
@@ -373,6 +377,22 @@ abstract class AbstractAPI implements Api
     }
 
     /**
+     * @return string
+     */
+    public function getAccessTokenCacheKey()
+    {
+        return $this->access_token_cache_key;
+    }
+
+    /**
+     * @return string
+     */
+    protected function getRefreshTokenCacheKey()
+    {
+        return $this->refresh_token_cache_key;
+    }
+
+    /**
      * @return $this
      */
     public function setDebug()
@@ -508,6 +528,33 @@ abstract class AbstractAPI implements Api
         curl_setopt($this->curl, CURLOPT_URL, $this->getBaseUrl() . $url);
         curl_setopt($this->curl, CURLOPT_POST, 1);
         curl_setopt($this->curl, CURLOPT_CUSTOMREQUEST, 'PUT');
+        curl_setopt($this->curl, CURLOPT_POSTFIELDS, $raw ? http_build_query($post) : json_encode($post));
+
+        return $this->execute();
+    }
+
+    /**
+     * @throws HttpException
+     * @throws UnauthorizedException
+     * @throws CurlException
+     */
+    protected function patch($url, array $post, $raw = false)
+    {
+        $url = ltrim($url, '/');
+        $this->init()
+            ->setHeaders(array_filter([
+                'Accept'       => $raw ? null : 'application/json',
+                'Content-type' => $raw ? 'application/x-www-form-urlencoded' : 'application/json',
+            ]));
+
+        // clean string
+        $post = $this->arrayMapRecursive(function ($data) {
+            return Util::normalizeChars($data);
+        }, $post);
+
+        curl_setopt($this->curl, CURLOPT_URL, $this->getBaseUrl() . $url);
+        curl_setopt($this->curl, CURLOPT_POST, 1);
+        curl_setopt($this->curl, CURLOPT_CUSTOMREQUEST, 'PATCH');
         curl_setopt($this->curl, CURLOPT_POSTFIELDS, $raw ? http_build_query($post) : json_encode($post));
 
         return $this->execute();
