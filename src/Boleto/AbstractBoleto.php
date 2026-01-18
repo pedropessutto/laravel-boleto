@@ -335,6 +335,13 @@ abstract class AbstractBoleto implements BoletoContract
     protected $logo;
 
     /**
+     * Logotipo em Base64
+     *
+     * @var string
+     */
+    protected $logoBase64;
+
+    /**
      * Variáveis adicionais.
      *
      * @var array
@@ -1484,6 +1491,20 @@ abstract class AbstractBoleto implements BoletoContract
     }
 
     /**
+     * Define a localização do logotipo em Base64
+     *
+     * @param string $logo
+     *
+     * @return AbstractBoleto
+     */
+    public function setLogoBase64($logoBase64)
+    {
+        $this->logoBase64 = $logoBase64;
+
+        return $this;
+    }
+
+    /**
      * Retorna a localização do logotipo
      *
      * @return string
@@ -1500,6 +1521,10 @@ abstract class AbstractBoleto implements BoletoContract
      */
     public function getLogoBase64()
     {
+        if ($this->logoBase64) {
+            return $this->logoBase64;
+        }
+
         return 'data:image/' . pathinfo($this->getLogo(), PATHINFO_EXTENSION) .
             ';base64,' . base64_encode(file_get_contents($this->getLogo()));
     }

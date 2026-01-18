@@ -135,12 +135,25 @@ class PdfCaixa extends AbstractPdf implements PdfContract
         $this->Ln(2);
         $this->SetFont($this->PadraoFont, '', $this->fdes);
 
-        $logo = preg_replace('/\&.*/', '', $this->boleto[$i]->getLogo());
-        $ext = pathinfo($logo, PATHINFO_EXTENSION);
+        $logoBase64 = $this->boleto[$i]->getLogoBase64();
+        $logoPath   = $this->boleto[$i]->getLogo();
 
-        if ($this->boleto[$i]->getLogo() && ! empty($this->boleto[$i]->getLogo())) {
-            $this->Image($this->boleto[$i]->getLogo(), 20, ($this->GetY()), 0, 12, $ext);
+        if (!empty($logoBase64)) {
+
+            // Captura a extensão
+            preg_match('/^data:image\/(\w+);base64,/', $logoBase64, $matches);
+            $ext = isset($matches[1]) ? $matches[1] : 'png';
+
+            $this->Image($logoBase64, 20, $this->GetY(), 0, 12, $ext);
+
+        } elseif (!empty($logoPath)) {
+
+            $logo = preg_replace('/\&.*/', '', $logoPath);
+            $ext  = pathinfo($logo, PATHINFO_EXTENSION);
+
+            $this->Image($logoPath, 20, $this->GetY(), 0, 12, $ext);
         }
+
         $this->Cell(56);
         $this->Cell(0, $this->desc, $this->_($this->boleto[$i]->getBeneficiario()->getNome()), 0, 1);
         $this->Cell(56);
