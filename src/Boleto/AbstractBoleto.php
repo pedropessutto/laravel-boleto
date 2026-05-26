@@ -118,6 +118,13 @@ abstract class AbstractBoleto implements BoletoContract
     public $diasProtesto = 0;
 
     /**
+     * Dias para Negativação
+     *
+     * @var int
+     */
+    // public $diasNegativacao = 0;
+
+    /**
      * Instrução pers. para protesto
      *
      * @var int
@@ -1407,6 +1414,22 @@ abstract class AbstractBoleto implements BoletoContract
     }
 
     /**
+     * Seta dias para negativação
+     *
+     * @param int $diasNegativacao
+     *
+     * @return AbstractBoleto
+     * @throws ValidationException
+     */
+    // public function setDiasNegativacao($diasNegativacao)
+    // {
+    //     $diasNegativacao = (int) $diasNegativacao;
+    //     $this->diasNegativacao = $diasNegativacao > 0 ? $diasNegativacao : 0;
+
+    //     return $this;
+    // }
+
+    /**
      * Seta instrução personalizada para protesto
      *
      * @param int $protestoPersonalizado
@@ -1433,6 +1456,18 @@ abstract class AbstractBoleto implements BoletoContract
     {
         return $this->diasProtesto > 0 ? $this->diasProtesto : $default;
     }
+
+    /**
+     * Retorna os dias para negativação
+     *
+     * @param int $default
+     *
+     * @return int
+     */
+    // public function getDiasNegativacao($default = 0)
+    // {
+    //     return $this->diasNegativacao > 0 ? $this->diasNegativacao : $default;
+    // }
 
     /**
      * Retorna o protesto personalizado
@@ -2227,6 +2262,7 @@ abstract class AbstractBoleto implements BoletoContract
             'juros'               => Util::nReal($this->getJuros(), 2, false),
             'juros_apos'          => $this->getJurosApos(),
             'dias_protesto'       => $this->getDiasProtesto(),
+            // 'dias_negativacao'    => $this->getDiasNegativacao(),
             'sacador_avalista'    => $this->getSacadorAvalista()
                 ? [
                     'nome'              => $this->getSacadorAvalista()->getNome(),

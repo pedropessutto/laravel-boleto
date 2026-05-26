@@ -32,6 +32,8 @@ class Sicredi extends AbstractRemessa implements RemessaContract
     const OCORRENCIA_ALT_OUTROS_DADOS = '31';
     const INSTRUCAO_SEM = '00';
     const INSTRUCAO_PROTESTO = '06';
+    const INSTRUCAO_PROTESTO_NEGATIVAR = '99';
+    const INSTRUCAO_NEGATIVAR = '06';
 
     public function __construct(array $params)
     {
@@ -204,14 +206,21 @@ class Sicredi extends AbstractRemessa implements RemessaContract
         $this->add(151, 156, $boleto->getDataDocumento()->format('dmy'));
         $this->add(157, 158, self::INSTRUCAO_SEM);
         $this->add(159, 160, self::INSTRUCAO_SEM);
-        if ($boleto->getDiasProtesto() > 0) {
+        if ($boleto->getDiasProtesto() > 0 && $boleto->getProtestoPersonalizado() != self::INSTRUCAO_PROTESTO_NEGATIVAR) {
             $this->add(157, 158, self::INSTRUCAO_PROTESTO);
             $this->add(159, 160, Util::formatCnab('9', $boleto->getDiasProtesto(), 2));
         }
         $this->add(161, 173, Util::formatCnab('9', $boleto->getMoraDia(), 13, 2));
         $this->add(174, 179, $boleto->getDesconto() > 0 ? $boleto->getDataDesconto()->format('dmy') : '000000');
         $this->add(180, 192, Util::formatCnab('9', 0, 13, 2));
-        $this->add(193, 205, Util::formatCnab('9', 0, 13, 2));
+        if ($boleto->getDiasProtesto() > 0 && $boleto->getProtestoPersonalizado() == self::INSTRUCAO_PROTESTO_NEGATIVAR) {
+            $this->add(193, 194, self::INSTRUCAO_NEGATIVAR);
+            $this->add(195, 196, Util::formatCnab('9', $boleto->getDiasProtesto(), 2));
+        }
+        else {
+            $this->add(193, 196, Util::formatCnab('9', 0, 4, 2));
+        }
+        $this->add(197, 205, Util::formatCnab('9', 0, 9, 2));
         $this->add(206, 218, Util::formatCnab('9', 0, 13, 2));
         $this->add(219, 220, strlen(Util::onlyNumbers($boleto->getPagador()->getDocumento())) == 14 ? '20' : '10');
         $this->add(221, 234, Util::formatCnab('9L', $boleto->getPagador()->getDocumento(), 14));
