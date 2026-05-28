@@ -1440,7 +1440,7 @@ abstract class AbstractBoleto implements BoletoContract
     public function setProtestoPersonalizado($protestoPersonalizado)
     {
         $protestoPersonalizado = (int) $protestoPersonalizado;
-        $this->protestoPersonalizado = $protestoPersonalizado > 0 && $protestoPersonalizado < 10 ? $protestoPersonalizado : 0;
+        $this->protestoPersonalizado = $protestoPersonalizado > 0 ? $protestoPersonalizado : 0;
 
         return $this;
     }
@@ -1478,7 +1478,7 @@ abstract class AbstractBoleto implements BoletoContract
      */
     public function getProtestoPersonalizado($default = 0)
     {
-        return $this->protestoPersonalizado > 0 && $this->protestoPersonalizado < 10 ? $this->protestoPersonalizado : $default;
+        return $this->protestoPersonalizado > 0 ? $this->protestoPersonalizado : $default;
     }
 
     /**
