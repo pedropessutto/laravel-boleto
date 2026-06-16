@@ -109,7 +109,7 @@ class Santander extends AbstractRemessa implements RemessaContract
     {
         $conta = $this->getConta();
         if (strlen($conta) >= 8) {
-            $conta = substr($conta, 0, 7);
+            $conta = substr($conta, 0, 8);
         }
 
         return Util::formatCnab('9', $this->getAgencia(), 4)
