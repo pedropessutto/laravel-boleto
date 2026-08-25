@@ -217,7 +217,7 @@ class Bb extends AbstractRemessa implements RemessaContract
         }
         $this->add(222, 223, Util::formatCnab('9', $boleto->getDiasProtesto(), 2));
         $this->add(224, 224, '0');
-        $this->add(225, 227, '000');
+        $this->add(225, 227, '180');
         $this->add(228, 229, Util::formatCnab('9', $boleto->getMoeda(), 2));
         $this->add(230, 239, '0000000000');
         $this->add(240, 240, '');
