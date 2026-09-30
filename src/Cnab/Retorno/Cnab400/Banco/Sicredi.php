@@ -260,6 +260,10 @@ class Sicredi extends AbstractRetorno implements RetornoCnab400
     {
         $d = $this->detalheAtual();
 
+        if ($detalhe[0] == '8') {
+            return false;
+        }
+
         $d->setNossoNumero($this->rem(48, 62, $detalhe))
             ->setNumeroControle($this->rem(117, 126, $detalhe))
             ->setNumeroDocumento($this->rem(117, 126, $detalhe))
