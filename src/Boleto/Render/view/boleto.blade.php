@@ -39,10 +39,10 @@
 			<div class="info-empresa">
 				@if ($logo)
 					<div style="display: inline-block;">
-						<img alt="logo" src="{{ $logo_base64 }}"/>
+						<img alt="logo" src="{{ $logo_base64 }}" style="height: 12mm; width: auto;"/>
 					</div>
 				@endif
-				<div style="display: inline-block; vertical-align: super;">
+				<div style="display: inline-block; vertical-align: super; margin-left: 3mm;">
 					<div style="font-size: 0.8125rem;"><strong>{{ $beneficiario['nome'] }}</strong></div>
 					<div>{{ $beneficiario['endereco'] }}</div>
 					<div>{{ $beneficiario['endereco2'] }}</div>
@@ -180,10 +180,10 @@
 			<div class="info-empresa">
 				@if ($logo)
 					<div style="display: inline-block;">
-						<img alt="logo" src="{{ $logo_base64 }}"/>
+						<img alt="logo" src="{{ $logo_base64 }}" style="height: 12mm; width: auto;"/>
 					</div>
 				@endif
-				<div style="display: inline-block; vertical-align: super;">
+				<div style="display: inline-block; vertical-align: super; margin-left: 3mm;">
 					<div style="font-size: 0.8125rem;"><strong>{{ $beneficiario['nome'] }}</strong></div>
 					<div>{{ $beneficiario['endereco'] }}</div>
 					<div>{{ $beneficiario['endereco2'] }}</div>

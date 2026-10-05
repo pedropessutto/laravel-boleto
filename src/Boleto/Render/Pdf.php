@@ -139,6 +139,8 @@ class Pdf extends AbstractPdf implements PdfContract
 
         $logoBase64 = $this->boleto[$i]->getLogoBase64();
         $logoPath   = $this->boleto[$i]->getLogo();
+        $logoAltura = 12;
+        $logoLargura = 0;
 
         if (!empty($logoBase64)) {
 
@@ -146,27 +148,68 @@ class Pdf extends AbstractPdf implements PdfContract
             preg_match('/^data:image\/(\w+);base64,/', $logoBase64, $matches);
             $ext = isset($matches[1]) ? $matches[1] : 'png';
 
-            $this->Image($logoBase64, 20, $this->GetY(), 0, 12, $ext);
+            $logoLargura = $this->larguraLogo($logoBase64, $logoAltura);
+            $this->Image($logoBase64, 20, $this->GetY(), $logoLargura, $logoAltura, $ext);
 
         } elseif (!empty($logoPath)) {
 
             $logo = preg_replace('/\&.*/', '', $logoPath);
             $ext  = pathinfo($logo, PATHINFO_EXTENSION);
 
-            $this->Image($logoPath, 20, $this->GetY(), 0, 12, $ext);
+            $logoLargura = $this->larguraLogo($logoPath, $logoAltura);
+            $this->Image($logoPath, 20, $this->GetY(), $logoLargura, $logoAltura, $ext);
         }
 
-        $this->Cell(56);
+        $recuo = $logoLargura > 0 ? $logoLargura + 3 : 0;
+
+        if ($recuo > 0) {
+            $this->Cell($recuo);
+        }
         $this->Cell(0, $this->desc, $this->_($this->boleto[$i]->getBeneficiario()->getNome()), 0, 1);
-        $this->Cell(56);
+        if ($recuo > 0) {
+            $this->Cell($recuo);
+        }
         $this->Cell(0, $this->desc, $this->_($this->boleto[$i]->getBeneficiario()->getDocumento(), '##.###.###/####-##'), 0, 1);
-        $this->Cell(56);
+        if ($recuo > 0) {
+            $this->Cell($recuo);
+        }
         $this->Cell(0, $this->desc, $this->_($this->boleto[$i]->getBeneficiario()->getEndereco()), 0, 1);
-        $this->Cell(56);
+        if ($recuo > 0) {
+            $this->Cell($recuo);
+        }
         $this->Cell(0, $this->desc, $this->_($this->boleto[$i]->getBeneficiario()->getCepCidadeUf()), 0, 1);
         $this->Ln(6);
 
         return $this;
+    }
+
+    /**
+     * Largura em mm para a altura informada, preservando a proporção do arquivo.
+     *
+     * @param string $src
+     * @param float $altura
+     *
+     * @return float
+     */
+    protected function larguraLogo($src, $altura)
+    {
+        $info = false;
+
+        if (is_string($src) && strncmp($src, 'data:image', 10) === 0) {
+            $partes = explode(',', $src, 2);
+            $binario = isset($partes[1]) ? base64_decode($partes[1], true) : false;
+            if ($binario !== false) {
+                $info = @getimagesizefromstring($binario);
+            }
+        } elseif (is_string($src) && is_file($src)) {
+            $info = @getimagesize($src);
+        }
+
+        if ($info === false || empty($info[0]) || empty($info[1])) {
+            return 50;
+        }
+
+        return $altura * ($info[0] / $info[1]);
     }
 
     /**
