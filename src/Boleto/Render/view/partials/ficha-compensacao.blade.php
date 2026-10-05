@@ -180,23 +180,26 @@
 
     <tr>
         <td colspan="8" class="noborder">
-            {!! $codigo_barras !!}
-            @if(isset($pix_qrcode) && $localizacao_pix == \Eduardokum\LaravelBoleto\Boleto\Render\Html::PIX_COD_BARRAS)
-                <table style="float: right">
-                    <tr>
-                        <td colspan="2" class="noborder"><div class="conteudo">Pague com PIX</div></td>
-                        <td class="noborder" rowspan="3"><img src="{{ $pix_qrcode_image }}" style="height: 50px;margin-left: 20px;" alt="QR Code PIX"></td>
-                    </tr>
-                    <tr>
-                        <td class="noborder"><div class="conteudo">Vencimento:</div></td>
-                        <td class="noborder"><div class="titulo">{{ $data_vencimento->format('d/m/Y') }}</div></td>
-                    </tr>
-                    <tr>
-                        <td class="noborder"><div class="conteudo">Valor:</div></td>
-                        <td class="noborder"><div class="titulo">{{ $valor }}</div></td>
-                    </tr>
-                </table>
-            @endif
+            <div style="position: relative; min-height: 22mm;">
+                {!! $codigo_barras !!}
+                @if(isset($pix_qrcode) && $localizacao_pix == \Eduardokum\LaravelBoleto\Boleto\Render\Html::PIX_COD_BARRAS)
+                    <div style="position: absolute; top: 0; right: 0; height: 20mm; white-space: nowrap;">
+                        <div style="display: inline-block; vertical-align: top; width: 28mm; height: 20mm; font: 6pt Arial; line-height: 6mm;">
+                            <div style="font: bold 8pt Arial; margin-top: 3px;">Pague com PIX</div>
+                            <table cellpadding="0" cellspacing="0" style="border-collapse: collapse; margin: 0; line-height: 1.15;">
+                                <tr>
+                                    <td class="noborder" style="padding: 10px 4px 0 0 !important;"><strong>Vencimento:</strong></td>
+                                    <td class="noborder" style="padding: 10px 0 0 0 !important;">{{ $data_vencimento->format('d/m/Y') }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="noborder" style="padding: 12px 4px 0 0 !important;"><strong>Valor:</strong></td>
+                                    <td class="noborder" style="padding: 12px 0 0 0 !important;">R$ {{ $valor }}</td>
+                                </tr>
+                            </table>
+                        </div><img src="{{ $pix_qrcode_image }}" alt="QR Code PIX" style="width: 20mm; height: 20mm; vertical-align: top;">
+                    </div>
+                @endif
+            </div>
         </td>
     </tr>
     </tbody>
