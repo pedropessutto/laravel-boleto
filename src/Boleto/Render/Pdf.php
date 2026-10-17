@@ -506,18 +506,20 @@ class Pdf extends AbstractPdf implements PdfContract
         $xOriginal = $this->GetX();
         $this->Ln(3);
         $this->Cell(0, 15, '', 0, 1, 'L');
-        $this->i25($this->GetX(), $this->GetY() - 15, $this->boleto[$i]->getCodigoBarras(), .9, 17);
+        $temPixBarras = $this->boleto[$i]->getPixQrCode() !== null && $this->localizacao_pix == self::PIX_COD_BARRAS;
+        $this->i25($this->GetX(), $this->GetY() - 15, $this->boleto[$i]->getCodigoBarras(), $temPixBarras ? .8 : .9, 17);
 
-        if ($this->boleto[$i]->getPixQrCode() !== null && $this->localizacao_pix == self::PIX_COD_BARRAS) {
-            $this->SetXY(142, $yOriginal + 2);
+        if ($temPixBarras) {
+            $xPix = 130;
+            $this->SetXY($xPix, $yOriginal + 2);
             $this->SetFont($this->PadraoFont, 'B', $this->fcel);
             $this->Cell(0, 6, 'Pague com PIX', '', 1, 'L');
-            $this->SetX(142);
+            $this->SetX($xPix);
             $this->SetFont($this->PadraoFont, 'B', $this->fdes);
             $this->Cell(13, 6, 'Vencimento:', '', 0, 'L');
             $this->SetFont($this->PadraoFont, '', $this->fdes);
             $this->Cell(0, 6, $this->boleto[$i]->getDataVencimento()->format('d/m/Y'), '', 1, 'L');
-            $this->SetX(142);
+            $this->SetX($xPix);
             $this->SetFont($this->PadraoFont, 'B', $this->fdes);
             $this->Cell(13, 6, 'Valor:', '', 0, 'L');
             $this->SetFont($this->PadraoFont, '', $this->fdes);

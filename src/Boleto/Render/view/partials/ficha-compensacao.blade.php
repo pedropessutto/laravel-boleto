@@ -184,15 +184,15 @@
                 {!! $codigo_barras !!}
                 @if(isset($pix_qrcode) && $localizacao_pix == \Eduardokum\LaravelBoleto\Boleto\Render\Html::PIX_COD_BARRAS)
                     <div style="position: absolute; top: 0; right: 0; height: 20mm; white-space: nowrap;">
-                        <div style="display: inline-block; vertical-align: top; width: 28mm; height: 20mm; font: 6pt Arial; line-height: 6mm;">
+                        <div style="display: inline-block; vertical-align: top; width: 34mm; height: 20mm; font: 6pt Arial; line-height: 6mm;">
                             <div style="font: bold 8pt Arial; margin-top: 3px;">Pague com PIX</div>
                             <table cellpadding="0" cellspacing="0" style="border-collapse: collapse; margin: 0; line-height: 1.15;">
                                 <tr>
-                                    <td class="noborder" style="padding: 10px 4px 0 0 !important;"><strong>Vencimento:</strong></td>
+                                    <td class="noborder" style="padding: 10px 4px 0 0 !important; text-align: right;"><strong>Vencimento:</strong></td>
                                     <td class="noborder" style="padding: 10px 0 0 0 !important;">{{ $data_vencimento->format('d/m/Y') }}</td>
                                 </tr>
                                 <tr>
-                                    <td class="noborder" style="padding: 12px 4px 0 0 !important;"><strong>Valor:</strong></td>
+                                    <td class="noborder" style="padding: 12px 4px 0 0 !important; text-align: right;"><strong>Valor:</strong></td>
                                     <td class="noborder" style="padding: 12px 0 0 0 !important;">R$ {{ $valor }}</td>
                                 </tr>
                             </table>
