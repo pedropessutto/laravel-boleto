@@ -367,7 +367,7 @@ class Btg extends AbstractRetorno implements RetornoCnab240
             } elseif ($d->hasOcorrencia('25')) {
                 $this->totais['protestados']++;
                 $d->setOcorrenciaTipo($d::OCORRENCIA_PROTESTADA);
-            } elseif ($d->hasOcorrencia('40', '41', '42', '43', '61', '64', '65')) {
+            } elseif ($d->hasOcorrencia('14', '40', '41', '42', '43', '61', '64', '65')) {
                 $this->totais['alterados']++;
                 $d->setOcorrenciaTipo($d::OCORRENCIA_ALTERACAO);
             } elseif ($d->hasOcorrencia('03', '26', '30', '37')) {

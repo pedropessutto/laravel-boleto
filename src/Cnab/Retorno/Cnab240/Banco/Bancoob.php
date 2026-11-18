@@ -330,7 +330,7 @@ class Bancoob extends AbstractRetorno implements RetornoCnab240
             } elseif ($d->hasOcorrencia('25')) {
                 $this->totais['protestados']++;
                 $d->setOcorrenciaTipo($d::OCORRENCIA_PROTESTADA);
-            } elseif ($d->hasOcorrencia('27')) {
+            } elseif ($d->hasOcorrencia('14', '27')) {
                 $this->totais['alterados']++;
                 $d->setOcorrenciaTipo($d::OCORRENCIA_ALTERACAO);
             } elseif ($d->hasOcorrencia('03', '26', '30')) {
